@@ -10,7 +10,8 @@ import {
 export { currentQuestion, currentRound } from "./selectors";
 export { STARTING_LIVES, MAX_LIVES } from "./types";
 
-export function createSession(_content: GameContent): SessionState {
+export function createSession(content: GameContent): SessionState {
+  void content;
   return {
     screen: "title",
     characterId: null,

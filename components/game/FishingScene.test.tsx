@@ -27,6 +27,8 @@ describe("FishingScene", () => {
       quadraticCurveTo: vi.fn(),
       stroke: vi.fn(),
       fill: vi.fn(),
+      fillText: vi.fn(),
+      font: "",
       ellipse: vi.fn(),
       arc: vi.fn(),
       save: vi.fn(),

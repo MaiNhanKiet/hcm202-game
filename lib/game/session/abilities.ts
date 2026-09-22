@@ -8,7 +8,9 @@ export function applyAbility(
   state: SessionState,
   content: GameContent,
 ): SessionState {
-  if (state.abilityUsed || state.characterId === null) return state;
+  if (state.abilityUsed || state.characterId === null || state.screen !== "fishing") {
+    return state;
+  }
 
   if (state.characterId === "persistent") {
     return {

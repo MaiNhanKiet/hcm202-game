@@ -9,6 +9,18 @@ describe("cast", () => {
     expect(chargePower(2000)).toBe(1);
   });
 
+  it("a full-power downward cast can land past mid-pond", () => {
+    let hook = startCast(0.18, 1);
+    let landed = false;
+    for (let i = 0; i < 200 && !landed; i++) {
+      const step = stepCast(hook, 1 / 60);
+      hook = step.hook;
+      landed = step.landed;
+    }
+    expect(landed).toBe(true);
+    expect(hook.x).toBeGreaterThan(500);
+  });
+
   it("lands on the waterline from a downward cast", () => {
     let hook = startCast(Math.PI / 3, 0.7);
     let landed = false;

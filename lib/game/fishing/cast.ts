@@ -18,7 +18,7 @@ export function aimAngle(
 }
 
 export function startCast(angle: number, power: number): HookState {
-  const speed = 220 + power * 520;
+  const speed = 360 + power * 860;
   return {
     phase: "flying",
     x: ROD_TIP.x,

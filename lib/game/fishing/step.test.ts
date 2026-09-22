@@ -56,7 +56,54 @@ describe("stepScene pause", () => {
       detectRadius: 80,
       state: "swim",
     }];
-    const { events } = stepScene(scene, idleInput, 1 / 60);
+    const { scene: next, events } = stepScene(scene, idleInput, 1 / 60);
     expect(events.some((e) => e.type === "fish-bite" && e.optionId === "a")).toBe(true);
+    expect(next.hook.phase).not.toBe("in-water");
+  });
+
+  it("hooks only the reported fish when two overlap the hook", () => {
+    const scene = createScene([]);
+    scene.hook = {
+      phase: "in-water",
+      x: 300,
+      y: 300,
+      vx: 0,
+      vy: 0,
+      flightDistance: 0,
+      bobberShake: 0,
+    };
+    scene.fish = [
+      {
+        optionId: "a",
+        text: "A",
+        isCorrect: true,
+        x: 300,
+        y: 300,
+        speed: 10,
+        heading: 0,
+        depth: 300,
+        detectRadius: 80,
+        state: "swim",
+      },
+      {
+        optionId: "b",
+        text: "B",
+        isCorrect: false,
+        x: 300,
+        y: 300,
+        speed: 10,
+        heading: 0,
+        depth: 300,
+        detectRadius: 80,
+        state: "swim",
+      },
+    ];
+    const { scene: next, events } = stepScene(scene, idleInput, 1 / 60);
+    const bites = events.filter((e) => e.type === "fish-bite");
+    expect(bites).toHaveLength(1);
+    const hooked = next.fish.filter((f) => f.state === "hooked");
+    const other = next.fish.filter((f) => f.state !== "hooked");
+    expect(hooked).toHaveLength(1);
+    expect(other).toHaveLength(1);
   });
 });

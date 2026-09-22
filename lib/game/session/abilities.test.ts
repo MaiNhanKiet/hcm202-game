@@ -17,6 +17,15 @@ function fishing(id: SessionState["characterId"]) {
 }
 
 describe("USE_ABILITY", () => {
+  it("does nothing before the fishing screen", () => {
+    const s = play(createSession(content), { type: "START" }, {
+      type: "SELECT_CHARACTER",
+      characterId: "persistent",
+    }, { type: "USE_ABILITY" });
+    expect(s.lives).toBe(3);
+    expect(s.abilityUsed).toBe(false);
+  });
+
   it("persistent adds one life up to 4 and then no-ops", () => {
     let s = fishing("persistent");
     s = play(s, { type: "USE_ABILITY" });

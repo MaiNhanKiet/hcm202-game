@@ -1,4 +1,5 @@
 import type { GameQuestion } from "@/lib/game/content/types";
+import { optionTag } from "@/lib/game/fishing/appearance";
 import type { SessionState } from "@/lib/game/session/types";
 
 export function FishingHud({
@@ -44,6 +45,13 @@ export function FishingHud({
         </p>
       ) : null}
       {lastCaughtText ? <p>Vừa bắt: {lastCaughtText}</p> : null}
+      <ol className="pointer-events-none mt-1 max-w-xl list-none space-y-1 text-sm">
+        {question.options.map((option, index) => (
+          <li key={option.id}>
+            <span className="font-semibold">{optionTag(index)}.</span> {option.text}
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

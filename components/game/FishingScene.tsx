@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Dispatch } from "react";
 import { FishingHud } from "./FishingHud";
+import { fishFill, optionTag } from "@/lib/game/fishing/appearance";
 import { chargePower } from "@/lib/game/fishing/cast";
 import { POND } from "@/lib/game/fishing/constants";
 import { fleeWrong, spawnFish } from "@/lib/game/fishing/fish";
@@ -39,19 +40,24 @@ function drawScene(
   }
   ctx.stroke();
 
-  for (const fish of scene.fish) {
-    if (fish.state === "hooked") continue;
+  scene.fish.forEach((fish, index) => {
+    if (fish.state === "hooked") return;
     ctx.save();
     ctx.translate(fish.x, fish.y);
     ctx.rotate(fish.heading);
-    ctx.fillStyle = fish.state === "flee" ? "#5a7180" : fish.isCorrect ? "#f2c14e" : "#3aa6d8";
+    ctx.fillStyle = fish.state === "flee" ? "#5a7180" : fishFill(index);
     ctx.globalAlpha =
       fish.state === "flee" || fish.optionId === hintedOptionId ? 0.35 : 1;
     ctx.beginPath();
     ctx.ellipse(0, 0, 16, 8, 0, 0, Math.PI * 2);
     ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.globalAlpha = 1;
+    ctx.rotate(-fish.heading);
+    ctx.font = "12px sans-serif";
+    ctx.fillText(optionTag(index), -5, 4);
     ctx.restore();
-  }
+  });
 
   const { hook, rod } = scene;
   ctx.strokeStyle = "#e8e0c8";
@@ -108,7 +114,11 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
     reelFull: false,
   });
   const chargeStartedAt = useRef<number | null>(null);
-  const [lastCaughtText, setLastCaughtText] = useState<string | null>(null);
+  const [lastCaught, setLastCaught] = useState<{ id: string; text: string } | null>(
+    null,
+  );
+  const lastCaughtText =
+    question && lastCaught?.id === question.id ? lastCaught.text : null;
 
   useEffect(() => {
     if (!question) return;
@@ -121,7 +131,6 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
         })),
       ),
     );
-    setLastCaughtText(null);
   }, [question?.id]);
 
   useEffect(() => {
@@ -180,7 +189,10 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
       for (const event of events) {
         if (event.type === "fish-bite" && question) {
           const option = question.options.find((item) => item.id === event.optionId);
-          setLastCaughtText(option?.text ?? event.optionId);
+          setLastCaught({
+            id: question.id,
+            text: option?.text ?? event.optionId,
+          });
           if (!question.correctAnswerIds.includes(event.optionId)) {
             sceneRef.current.fish = fleeWrong(sceneRef.current.fish, event.optionId);
           }

@@ -41,7 +41,7 @@ export function stepScene(
 
   const events: SceneEvent[] = [];
   let hook = scene.hook;
-  let rod = { ...scene.rod };
+  const rod = { ...scene.rod };
   let ripples = scene.ripples
     .map((ripple) => ({ ...ripple, age: ripple.age + dt }))
     .filter((ripple) => ripple.age <= 0.6);
@@ -89,11 +89,16 @@ export function stepScene(
   let fish = scene.fish;
   if (hook.phase !== "idle" || scene.fish.length > 0) {
     const stepped = scene.fish.map((item) => stepFish(item, hook, dt));
-    fish = stepped.map((item) => item.fish);
-    const bite = stepped.find((item) => item.bite);
-    if (bite) {
-      events.push({ type: "fish-bite", optionId: bite.fish.optionId });
-      hook = { ...hook, bobberShake: 1 };
+    const biteIndex = stepped.findIndex((item) => item.bite);
+    fish = stepped.map((item, index) => {
+      if (biteIndex === -1) return item.fish;
+      if (index === biteIndex) return item.fish;
+      if (item.bite) return scene.fish[index];
+      return item.fish;
+    });
+    if (biteIndex >= 0) {
+      events.push({ type: "fish-bite", optionId: stepped[biteIndex].fish.optionId });
+      hook = finishReel({ ...hook, bobberShake: 1 });
     }
   }
 

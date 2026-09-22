@@ -12,10 +12,12 @@ import type { Fish, HookState } from "./types";
 export type SpawnOption = { optionId: string; text: string; isCorrect: boolean };
 
 export function spawnFish(options: SpawnOption[]): Fish[] {
-  const span = POND.xMax - POND.xMin;
+  const spawnMin = 160;
+  const spawnMax = 720;
+  const span = spawnMax - spawnMin;
   return options.map((option, index) => {
     const x =
-      POND.xMin +
+      spawnMin +
       ((index + 1) / (options.length + 1)) * span;
     const y = WATER_Y + 30 + ((index * 47) % (POND.yMax - WATER_Y - 50));
     const speed = option.isCorrect
@@ -48,7 +50,7 @@ export function stepFish(
   hook: HookState,
   dt: number,
 ): { fish: Fish; bite: boolean } {
-  let next: Fish = { ...fish, y: Math.max(WATER_Y + 0.5, fish.y) };
+  const next: Fish = { ...fish, y: Math.max(WATER_Y + 0.5, fish.y) };
 
   if (next.state === "hooked") {
     return { fish: next, bite: false };
