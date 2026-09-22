@@ -117,6 +117,134 @@ function drawFish(
   ctx.restore();
 }
 
+function drawBomb(ctx: CanvasRenderingContext2D, x: number, y: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "#2a2a2a";
+  ctx.beginPath();
+  ctx.arc(0, 0, 14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#f0d28a";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(8, -10);
+  ctx.quadraticCurveTo(14, -18, 18, -14);
+  ctx.stroke();
+  ctx.fillStyle = "#e07a5f";
+  ctx.beginPath();
+  ctx.arc(18, -14, 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "rgba(16, 28, 36, 0.85)";
+  ctx.beginPath();
+  ctx.arc(0, -22, 11, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#fff6d8";
+  ctx.font = "700 10px 'Be Vietnam Pro', sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Bom", 0, -21);
+  ctx.restore();
+}
+
+function drawTrash(ctx: CanvasRenderingContext2D, x: number, y: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "#8a9a74";
+  ctx.fillRect(-12, -8, 24, 16);
+  ctx.fillStyle = "#6b7a58";
+  ctx.fillRect(-14, -12, 28, 5);
+  ctx.strokeStyle = "#4d5a3f";
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(-12, -8, 24, 16);
+  ctx.fillStyle = "rgba(16, 28, 36, 0.85)";
+  ctx.beginPath();
+  ctx.arc(0, -22, 11, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#fff6d8";
+  ctx.font = "700 10px 'Be Vietnam Pro', sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Rác", 0, -21);
+  ctx.restore();
+}
+
+function drawWeed(ctx: CanvasRenderingContext2D, x: number, y: number, phase: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  const sway = Math.sin(phase * 2.4) * 4;
+  ctx.strokeStyle = "#3d7a4a";
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  for (let i = -1; i <= 1; i += 1) {
+    ctx.beginPath();
+    ctx.moveTo(i * 7, 10);
+    ctx.quadraticCurveTo(i * 7 + sway, -2, i * 6 + sway * 1.2, -16);
+    ctx.stroke();
+  }
+  ctx.fillStyle = "#2f6a3c";
+  ctx.beginPath();
+  ctx.ellipse(-6 + sway * 0.3, -14, 5, 3, -0.4, 0, Math.PI * 2);
+  ctx.ellipse(5 + sway * 0.3, -12, 5, 3, 0.35, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "rgba(16, 28, 36, 0.85)";
+  ctx.beginPath();
+  ctx.arc(0, -26, 11, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#d8ffe0";
+  ctx.font = "700 9px 'Be Vietnam Pro', sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Rong", 0, -25);
+  ctx.restore();
+}
+
+function drawNet(ctx: CanvasRenderingContext2D, x: number, y: number, phase: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  const drift = Math.sin(phase * 1.5) * 2;
+  ctx.strokeStyle = "rgba(210, 220, 200, 0.85)";
+  ctx.lineWidth = 1.4;
+  for (let i = -2; i <= 2; i += 1) {
+    ctx.beginPath();
+    ctx.moveTo(-16 + drift, i * 6);
+    ctx.lineTo(16 + drift, i * 6);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(i * 7 + drift, -14);
+    ctx.lineTo(i * 7 + drift, 14);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = "#c9893b";
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(-18 + drift, -16, 36, 32);
+  ctx.fillStyle = "rgba(16, 28, 36, 0.85)";
+  ctx.beginPath();
+  ctx.arc(0, -26, 11, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#ffe8c8";
+  ctx.font = "700 9px 'Be Vietnam Pro', sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Lưới", 0, -25);
+  ctx.restore();
+}
+
+function drawSplash(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  waterY: number,
+  phase: number,
+) {
+  const t = (Math.sin(phase * 8) + 1) * 0.5;
+  ctx.save();
+  ctx.strokeStyle = `rgba(220, 245, 255, ${0.35 + t * 0.4})`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(x, waterY, 10 + t * 8, Math.PI, 0);
+  ctx.stroke();
+  ctx.restore();
+}
+
 function rodSwing(rod: SceneState["rod"]): number {
   return rodSwingAngle(rod);
 }
@@ -396,6 +524,25 @@ export function drawFishingScene(
   ctx.fillRect(0, scene.waterY - 4, 128, 10);
 
   scene.fish.forEach((fish) => {
+    if (fish.kind === "bomb") {
+      drawBomb(ctx, fish.x, fish.y);
+      return;
+    }
+    if (fish.kind === "trash") {
+      drawTrash(ctx, fish.x, fish.y);
+      return;
+    }
+    if (fish.kind === "weed") {
+      drawWeed(ctx, fish.x, fish.y, fish.phase);
+      return;
+    }
+    if (fish.kind === "net") {
+      drawNet(ctx, fish.x, fish.y, fish.phase);
+      return;
+    }
+    if (fish.state === "jump" && fish.y < scene.waterY + 6) {
+      drawSplash(ctx, fish.x, scene.waterY, fish.phase);
+    }
     drawFish(
       ctx,
       fish.x,

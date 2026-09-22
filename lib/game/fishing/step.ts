@@ -1,11 +1,11 @@
 import { aimAngle, chargeFromInput, startCast, stepCast, wedgeAimPower } from "./cast";
 import { POND, WATER_Y } from "./constants";
-import { cullOffscreen, followHook, removeFish, stepFish } from "./fish";
+import { cullOffscreen, followHook, removeFish, stepFish, isHazardKind } from "./fish";
 import { finishReel, stepHook, stepReelToTip } from "./hook";
 import { visualRodTip } from "./rod";
 import type { Fish, SceneEvent, SceneInput, SceneState } from "./types";
 
-export function createScene(fish: Fish[]): SceneState {
+export function createScene(fish: Fish[], roundIndex = 0): SceneState {
   const tip = visualRodTip(
     { swing: 0, bend: 0 },
     WATER_Y,
@@ -35,6 +35,7 @@ export function createScene(fish: Fish[]): SceneState {
     fish,
     ripples: [],
     castTrail: [],
+    roundIndex,
   };
 }
 
@@ -182,7 +183,9 @@ export function stepScene(
   }
 
   if (!landedThisFrame && (hook.phase !== "idle" || fish.length > 0)) {
-    const stepped = fish.map((item) => stepFish(item, hook, dt));
+    const stepped = fish.map((item) =>
+      stepFish(item, hook, dt, scene.roundIndex),
+    );
     const biteIndex = stepped.findIndex((item) => item.bite);
     fish = stepped.map((item, index) => {
       if (biteIndex === -1) return item.fish;
@@ -192,14 +195,21 @@ export function stepScene(
     });
     if (biteIndex >= 0) {
       const bitten = fish[biteIndex];
-      events.push({ type: "fish-bite", optionId: bitten.optionId });
-      if (bitten.isCorrect) {
-        // Stay in-water: must reach the surface before lifting to the tip.
-        hook = { ...hook, phase: "in-water", bobberShake: 1 };
-      } else {
+      if (isHazardKind(bitten.kind)) {
+        events.push({ type: "hazard-hit", kind: bitten.kind });
         fish = removeFish(fish, bitten.optionId);
         hook = finishReel(hook, { x: rod.tipX, y: rod.tipY });
         events.push({ type: "reeled-in" });
+        ripples = [...ripples, { x: bitten.x, y: Math.max(bitten.y, scene.waterY), age: 0 }];
+      } else {
+        events.push({ type: "fish-bite", optionId: bitten.optionId });
+        if (bitten.isCorrect) {
+          hook = { ...hook, phase: "in-water", bobberShake: 1 };
+        } else {
+          fish = removeFish(fish, bitten.optionId);
+          hook = finishReel(hook, { x: rod.tipX, y: rod.tipY });
+          events.push({ type: "reeled-in" });
+        }
       }
     }
   }

@@ -53,6 +53,10 @@ describe("stepScene pause", () => {
       speed: 10,
       heading: 0,
       homeHeading: 0,
+      kind: "answer",
+      turnTimer: 1,
+      phase: 0,
+      jumpVy: 0,
       depth: 300,
       detectRadius: 80,
       state: "swim",
@@ -85,6 +89,10 @@ describe("stepScene pause", () => {
         speed: 10,
         heading: 0,
         homeHeading: 0,
+        kind: "answer",
+        turnTimer: 1,
+        phase: 0,
+        jumpVy: 0,
         depth: 300,
         detectRadius: 80,
         state: "swim",
@@ -99,6 +107,10 @@ describe("stepScene pause", () => {
         speed: 10,
         heading: 0,
         homeHeading: 0,
+        kind: "answer",
+        turnTimer: 1,
+        phase: 0,
+        jumpVy: 0,
         depth: 320,
         detectRadius: 80,
         state: "swim",
@@ -135,6 +147,10 @@ describe("stepScene pause", () => {
       speed: 10,
       heading: 0,
       homeHeading: 0,
+      kind: "answer",
+      turnTimer: 1,
+      phase: 0,
+      jumpVy: 0,
       depth: WATER_Y + 120,
       detectRadius: 80,
       state: "hooked",
@@ -181,6 +197,10 @@ describe("stepScene pause", () => {
         speed: 10,
         heading: 0,
         homeHeading: 0,
+        kind: "answer",
+        turnTimer: 1,
+        phase: 0,
+        jumpVy: 0,
         depth: 300,
         detectRadius: 80,
         state: "swim",
@@ -195,6 +215,10 @@ describe("stepScene pause", () => {
         speed: 10,
         heading: 0,
         homeHeading: 0,
+        kind: "answer",
+        turnTimer: 1,
+        phase: 0,
+        jumpVy: 0,
         depth: 300,
         detectRadius: 80,
         state: "swim",
@@ -300,5 +324,44 @@ describe("stepScene pause", () => {
     const { scene: next } = stepScene(scene, idleInput, 1 / 60);
     expect(next.rod.tipY).toBeLessThan(scene.waterY - 8);
     expect(next.rod.bend).toBeLessThanOrEqual(0.55);
+  });
+
+  it("removes bomb/trash on bite and emits hazard-hit", () => {
+    const scene = createScene([], 1);
+    scene.hook = {
+      phase: "in-water",
+      x: 300,
+      y: 300,
+      vx: 0,
+      vy: 0,
+      flightDistance: 0,
+      bobberShake: 0,
+    };
+    scene.fish = [
+      {
+        optionId: "__bomb_0",
+        text: "Bom",
+        isCorrect: false,
+        labelIndex: 0,
+        x: 300,
+        y: 300,
+        speed: 10,
+        heading: 0,
+        homeHeading: 0,
+        kind: "bomb",
+        turnTimer: 1,
+        phase: 0,
+        jumpVy: 0,
+        depth: 300,
+        detectRadius: 80,
+        state: "swim",
+      },
+    ];
+    const { scene: next, events } = stepScene(scene, idleInput, 1 / 60);
+    expect(events.some((e) => e.type === "hazard-hit" && e.kind === "bomb")).toBe(
+      true,
+    );
+    expect(next.fish).toHaveLength(0);
+    expect(next.hook.phase).toBe("idle");
   });
 });

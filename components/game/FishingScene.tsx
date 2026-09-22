@@ -74,7 +74,9 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
           text: option.text,
           isCorrect: question.correctAnswerIds.includes(option.id),
         })),
+        state.roundIndex,
       ),
+      state.roundIndex,
     );
     hudRef.current = { hookPhase: "idle", charging: false, charge: 0 };
     countdownStartedAt.current = Date.now();
@@ -84,7 +86,7 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
     setCountdown(5);
     setPrep("question");
     setFishingReady(false);
-  }, [question?.id]);
+  }, [question?.id, state.roundIndex]);
 
   useEffect(() => {
     const tick = window.setInterval(() => {
@@ -200,6 +202,21 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
           if (!current.correctAnswerIds.includes(event.optionId)) {
             dispatch({ type: "SCORE_CATCH", optionId: event.optionId });
           }
+        }
+        if (event.type === "hazard-hit") {
+          const label =
+            event.kind === "bomb"
+              ? "Bom! −1 mạng"
+              : event.kind === "trash"
+                ? "Rác! −1 mạng"
+                : event.kind === "weed"
+                  ? "Rong! −1 mạng"
+                  : "Lưới! −1 mạng";
+          setLastCaught({
+            id: current.id,
+            text: label,
+          });
+          dispatch({ type: "SCORE_CATCH", optionId: `__hazard_${event.kind}` });
         }
         if (event.type === "fish-landed") {
           dispatch({ type: "SCORE_CATCH", optionId: event.optionId });

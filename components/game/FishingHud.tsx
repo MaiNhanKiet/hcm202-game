@@ -11,9 +11,9 @@ import type { SessionState } from "@/lib/game/session/types";
 import { STARTING_LIVES } from "@/lib/game/session/types";
 
 const PHASE_HINT: Record<HookPhase, string> = {
-  idle: "Giữ chuột trái · Kéo trong vùng quạt trắng để chỉnh lực · Thả để quăng",
+  idle: "Giữ trái · Kéo quạt chỉnh lực · Tránh bom, rác, rong, lưới · Thả để quăng",
   flying: "Móc đang bay — chờ chạm nước",
-  "in-water": "Giữ chuột trái để kéo cần về phía nhân vật",
+  "in-water": "Giữ chuột trái để kéo · Đừng câu vật cản",
   reeling: "Đang kéo cá lên…",
 };
 

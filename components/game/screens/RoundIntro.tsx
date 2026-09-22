@@ -19,9 +19,9 @@ const RULES = [
   },
   {
     step: "3",
-    title: "Kéo cần",
+    title: "Kéo cần & tránh nguy hiểm",
     detail:
-      "Giữ chuột trái để kéo mồi về mặt nước rồi lên cần. Sai đáp án mất 1 mạng.",
+      "Giữ chuột trái để kéo mồi lên. Tránh bom, rác, rong và lưới — câu trúng sẽ mất mạng. Vòng càng cao vật cản càng dày.",
   },
 ] as const;
 
