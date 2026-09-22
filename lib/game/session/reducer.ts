@@ -1,4 +1,5 @@
 import type { GameContent } from "../content/types";
+import { applyAbility } from "./abilities";
 import { currentQuestion, currentRound } from "./selectors";
 import {
   STARTING_LIVES,
@@ -174,7 +175,7 @@ export function sessionReducer(
         screen: "round-intro",
       };
     case "USE_ABILITY":
-      return state;
+      return applyAbility(state, content);
     default:
       return state;
   }
