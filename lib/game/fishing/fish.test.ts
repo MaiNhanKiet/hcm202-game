@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { HOOK_RADIUS, POND, WATER_Y } from "./constants";
 import { followHook, removeFish, spawnFish, stepFish } from "./fish";
-import type { HookState } from "./types";
+import type { Fish, HookState } from "./types";
 
 function hookAt(x: number, y: number, phase: HookState["phase"] = "in-water"): HookState {
   return { phase, x, y, vx: 0, vy: 0, flightDistance: 0, bobberShake: 0 };
@@ -97,7 +97,7 @@ describe("fish", () => {
       homeHeading: 0,
     };
     const farHook = hookAt(500, 400);
-    let fish = curious;
+    let fish: Fish = curious;
     for (let i = 0; i < 90; i += 1) {
       fish = stepFish(fish, farHook, 1 / 60).fish;
     }
