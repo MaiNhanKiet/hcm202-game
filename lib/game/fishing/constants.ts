@@ -1,0 +1,13 @@
+export const WATER_Y = 220;
+export const POND = { xMin: 40, xMax: 960, yMax: 540 };
+export const MAX_CAST_DISTANCE = 520;
+export const GRAVITY = 1800;
+export const ROD_TIP = { x: 80, y: 180 };
+export const SINK_SPEED = 40;
+export const REEL_SPEED = 90;
+export const CURRENT = 12;
+export const HOOK_RADIUS = 28;
+export const BASE_SPEED = 55;
+export const BASE_DETECT = 70;
+export const CORRECT_DETECT_BONUS = 1.35;
+export const CORRECT_SPEED_BONUS = 1.2;
