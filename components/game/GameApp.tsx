@@ -6,6 +6,7 @@ import type { GameContent } from "@/lib/game/content/types";
 import { createSession, sessionReducer } from "@/lib/game/session/reducer";
 import { currentQuestion, currentRound } from "@/lib/game/session/selectors";
 import type { SessionAction, SessionState } from "@/lib/game/session/types";
+import { FishingScene } from "./FishingScene";
 import { CharacterSelect } from "./screens/CharacterSelect";
 import { DataError } from "./screens/DataError";
 import { ExplainScreen } from "./screens/ExplainScreen";
@@ -21,7 +22,7 @@ export type FishingSlotProps = {
   content: GameContent;
 };
 
-function StubFishing({ state, dispatch, content }: FishingSlotProps) {
+export function StubFishing({ state, dispatch, content }: FishingSlotProps) {
   const question = currentQuestion(state, content);
   if (!question) return null;
   return (
@@ -63,7 +64,7 @@ function StubFishing({ state, dispatch, content }: FishingSlotProps) {
 
 export function GameApp({
   content,
-  FishingSlot = StubFishing,
+  FishingSlot = FishingScene,
 }: {
   content: GameContent;
   FishingSlot?: ComponentType<FishingSlotProps>;

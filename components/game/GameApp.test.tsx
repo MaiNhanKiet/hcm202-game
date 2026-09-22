@@ -3,12 +3,12 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { makeFixtureContent } from "@/lib/game/content/fixtures";
-import { GameApp } from "./GameApp";
+import { GameApp, StubFishing } from "./GameApp";
 
 describe("GameApp", () => {
   it("plays title → character → round → catch → explain", async () => {
     const user = userEvent.setup();
-    render(<GameApp content={makeFixtureContent()} />);
+    render(<GameApp content={makeFixtureContent()} FishingSlot={StubFishing} />);
     expect(screen.getByText("Câu Cá Tri Thức")).toBeTruthy();
     expect(screen.getByText("Giải mã quyền lực")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: /bắt đầu/i }));
@@ -23,7 +23,7 @@ describe("GameApp", () => {
     const user = userEvent.setup();
     const content = makeFixtureContent();
     content.rounds[0] = { ...content.rounds[0], questions: [] };
-    render(<GameApp content={content} />);
+    render(<GameApp content={content} FishingSlot={StubFishing} />);
     await user.click(screen.getByRole("button", { name: /bắt đầu/i }));
     await user.click(screen.getByRole("button", { name: /người quan sát/i }));
     await user.click(screen.getByRole("button", { name: /vào vòng/i }));
