@@ -1,0 +1,590 @@
+{
+  "game": {
+    "title": "Câu Cá Tri Thức",
+    "subtitle": "Giải mã quyền lực",
+    "questionsPerPlay": 3,
+    "totalRounds": 4
+  },
+  "rounds": [
+    {
+      "id": "round-1",
+      "order": 1,
+      "title": "KHỞI NGUỒN",
+      "subtitle": "Sự ra đời của Đảng và phong trào yêu nước",
+      "reward": "Mảnh mã #1",
+      "questions": [
+        {
+          "id": "r1-q1",
+          "type": "multiple",
+          "difficulty": "easy",
+          "question": "Theo tư tưởng Hồ Chí Minh, sự ra đời của Đảng Cộng sản Việt Nam là sự kết hợp của những yếu tố nào?",
+          "instruction": "Bắt 3 con cá đúng",
+          "options": [
+            {
+              "id": "marxism",
+              "text": "Chủ nghĩa Mác – Lênin"
+            },
+            {
+              "id": "workers",
+              "text": "Phong trào công nhân"
+            },
+            {
+              "id": "patriotism",
+              "text": "Phong trào yêu nước"
+            },
+            {
+              "id": "spontaneous",
+              "text": "Phong trào tự phát"
+            },
+            {
+              "id": "random",
+              "text": "Ngẫu nhiên lịch sử"
+            }
+          ],
+          "correctAnswerIds": ["marxism", "workers", "patriotism"],
+          "explanation": "Trong điều kiện Việt Nam, Hồ Chí Minh đề cập sự kết hợp giữa chủ nghĩa Mác – Lênin, phong trào công nhân và phong trào yêu nước."
+        },
+        {
+          "id": "r1-q2",
+          "type": "single",
+          "difficulty": "easy",
+          "question": "Yếu tố nào được Hồ Chí Minh bổ sung khi vận dụng quy luật hình thành Đảng vào điều kiện Việt Nam?",
+          "instruction": "Bắt 1 con cá đúng",
+          "options": [
+            {
+              "id": "patriotism",
+              "text": "Phong trào yêu nước"
+            },
+            {
+              "id": "state",
+              "text": "Bộ máy nhà nước"
+            },
+            {
+              "id": "market",
+              "text": "Kinh tế thị trường"
+            },
+            {
+              "id": "international",
+              "text": "Phong trào quốc tế"
+            }
+          ],
+          "correctAnswerIds": ["patriotism"],
+          "explanation": "Phong trào yêu nước là yếu tố được nhấn mạnh thêm khi lý giải sự ra đời của Đảng trong điều kiện cụ thể của Việt Nam."
+        },
+        {
+          "id": "r1-q3",
+          "type": "single",
+          "difficulty": "medium",
+          "question": "Vì sao phong trào yêu nước có vị trí quan trọng trong quá trình hình thành Đảng ở Việt Nam?",
+          "instruction": "Bắt đáp án phù hợp nhất",
+          "options": [
+            {
+              "id": "long-tradition",
+              "text": "Có truyền thống lâu dài và khả năng tập hợp lực lượng dân tộc"
+            },
+            {
+              "id": "workers-only",
+              "text": "Chỉ tồn tại trong giai cấp công nhân"
+            },
+            {
+              "id": "no-national",
+              "text": "Không liên quan đến đấu tranh dân tộc"
+            },
+            {
+              "id": "after-party",
+              "text": "Chỉ xuất hiện sau khi Đảng thành lập"
+            }
+          ],
+          "correctAnswerIds": ["long-tradition"],
+          "explanation": "Phong trào yêu nước có nền tảng sâu rộng trong xã hội Việt Nam và có quan hệ chặt chẽ với phong trào công nhân."
+        },
+        {
+          "id": "r1-q4",
+          "type": "single",
+          "difficulty": "medium",
+          "question": "Mối quan hệ phù hợp nhất giữa phong trào công nhân và phong trào yêu nước trong điều kiện Việt Nam là gì?",
+          "instruction": "Bắt 1 con cá đúng",
+          "options": [
+            {
+              "id": "connected",
+              "text": "Có sự gắn bó và kết hợp với nhau"
+            },
+            {
+              "id": "separate",
+              "text": "Hoàn toàn độc lập với nhau"
+            },
+            {
+              "id": "opposite",
+              "text": "Đối lập với nhau"
+            },
+            {
+              "id": "replacement",
+              "text": "Phong trào yêu nước thay thế phong trào công nhân"
+            }
+          ],
+          "correctAnswerIds": ["connected"],
+          "explanation": "Giáo trình nhấn mạnh sự gắn bó giữa phong trào công nhân với phong trào yêu nước trong quá trình hình thành Đảng."
+        },
+        {
+          "id": "r1-q5",
+          "type": "single",
+          "difficulty": "hard",
+          "question": "Nếu chỉ giải thích sự ra đời của Đảng bằng chủ nghĩa Mác – Lênin và phong trào công nhân thì còn thiếu yếu tố nào trong cách tiếp cận của Hồ Chí Minh?",
+          "instruction": "Bắt đáp án còn thiếu",
+          "options": [
+            {
+              "id": "patriotism",
+              "text": "Phong trào yêu nước Việt Nam"
+            },
+            {
+              "id": "administration",
+              "text": "Kỹ thuật tổ chức nhà nước"
+            },
+            {
+              "id": "economy",
+              "text": "Chính sách kinh tế"
+            },
+            {
+              "id": "diplomacy",
+              "text": "Quan hệ ngoại giao"
+            }
+          ],
+          "correctAnswerIds": ["patriotism"],
+          "explanation": "Điểm đáng chú ý trong cách Hồ Chí Minh vận dụng lý luận vào Việt Nam là đưa phong trào yêu nước vào quá trình lý giải sự ra đời của Đảng."
+        }
+      ]
+    },
+    {
+      "id": "round-2",
+      "order": 2,
+      "title": "ĐẠO ĐỨC & VĂN MINH",
+      "subtitle": "Điều kiện xây dựng Đảng đạo đức, văn minh",
+      "reward": "Mảnh mã #2",
+      "questions": [
+        {
+          "id": "r2-q1",
+          "type": "multiple",
+          "difficulty": "easy",
+          "question": "Những yếu tố nào phù hợp với yêu cầu xây dựng Đảng 'đạo đức, văn minh'?",
+          "instruction": "Bắt tất cả các con cá đúng",
+          "options": [
+            {
+              "id": "people-interest",
+              "text": "Mục tiêu vì lợi ích của đất nước và nhân dân"
+            },
+            {
+              "id": "proper-line",
+              "text": "Đường lối phù hợp với thực tiễn"
+            },
+            {
+              "id": "self-cultivation",
+              "text": "Cán bộ, đảng viên tu dưỡng đạo đức"
+            },
+            {
+              "id": "personal-interest",
+              "text": "Đặt lợi ích cá nhân lên trước"
+            },
+            {
+              "id": "above-law",
+              "text": "Đứng trên pháp luật"
+            }
+          ],
+          "correctAnswerIds": [
+            "people-interest",
+            "proper-line",
+            "self-cultivation"
+          ],
+          "explanation": "Giáo trình gắn yêu cầu đạo đức, văn minh với mục tiêu, đường lối đúng đắn và phẩm chất của đội ngũ cán bộ, đảng viên."
+        },
+        {
+          "id": "r2-q2",
+          "type": "single",
+          "difficulty": "easy",
+          "question": "Một tổ chức được coi là 'văn minh' không thể tách rời yếu tố nào?",
+          "instruction": "Bắt đáp án phù hợp nhất",
+          "options": [
+            {
+              "id": "quality",
+              "text": "Trí tuệ, đạo đức và năng lực tổ chức"
+            },
+            {
+              "id": "unlimited-power",
+              "text": "Quyền lực không giới hạn"
+            },
+            {
+              "id": "private-interest",
+              "text": "Lợi ích riêng"
+            },
+            {
+              "id": "no-discipline",
+              "text": "Không cần kỷ luật"
+            }
+          ],
+          "correctAnswerIds": ["quality"],
+          "explanation": "Tính văn minh gắn với chất lượng tổ chức, con người, năng lực lãnh đạo và những giá trị đạo đức."
+        },
+        {
+          "id": "r2-q3",
+          "type": "single",
+          "difficulty": "medium",
+          "question": "Nguyên tắc nào giúp tổ chức tự phát hiện và sửa chữa khuyết điểm?",
+          "instruction": "Bắt 1 con cá đúng",
+          "options": [
+            {
+              "id": "criticism",
+              "text": "Tự phê bình và phê bình"
+            },
+            {
+              "id": "avoid",
+              "text": "Né tránh khuyết điểm"
+            },
+            {
+              "id": "hide",
+              "text": "Giấu sai sót"
+            },
+            {
+              "id": "individual",
+              "text": "Cá nhân quyết định mọi việc"
+            }
+          ],
+          "correctAnswerIds": ["criticism"],
+          "explanation": "Tự phê bình và phê bình được xem là một nguyên tắc quan trọng trong hoạt động của Đảng."
+        },
+        {
+          "id": "r2-q4",
+          "type": "multiple",
+          "difficulty": "medium",
+          "question": "Những hành vi nào KHÔNG phù hợp với yêu cầu về đạo đức và văn minh?",
+          "instruction": "Bắt 2 con cá chưa phù hợp",
+          "options": [
+            {
+              "id": "listen",
+              "text": "Lắng nghe nhân dân"
+            },
+            {
+              "id": "discipline",
+              "text": "Giữ kỷ luật"
+            },
+            {
+              "id": "self-interest",
+              "text": "Đặt lợi ích cá nhân lên trên lợi ích chung"
+            },
+            {
+              "id": "avoid-responsibility",
+              "text": "Né tránh trách nhiệm"
+            }
+          ],
+          "correctAnswerIds": ["self-interest", "avoid-responsibility"],
+          "explanation": "Đặt lợi ích cá nhân lên trên lợi ích chung và né tránh trách nhiệm trái với yêu cầu về phẩm chất, kỷ luật và trách nhiệm."
+        },
+        {
+          "id": "r2-q5",
+          "type": "single",
+          "difficulty": "hard",
+          "question": "Một cán bộ có chuyên môn tốt nhưng thiếu kỷ luật, không tiếp thu phê bình và xa rời nhân dân. Nhận định nào phù hợp nhất?",
+          "instruction": "Bắt đáp án phù hợp nhất",
+          "options": [
+            {
+              "id": "skill-enough",
+              "text": "Chuyên môn tốt là đủ"
+            },
+            {
+              "id": "not-enough",
+              "text": "Chưa đáp ứng đầy đủ yêu cầu về đạo đức và văn minh"
+            },
+            {
+              "id": "work-only",
+              "text": "Chỉ cần hoàn thành công việc"
+            },
+            {
+              "id": "unrelated",
+              "text": "Không liên quan đến phẩm chất cán bộ"
+            }
+          ],
+          "correctAnswerIds": ["not-enough"],
+          "explanation": "Yêu cầu đối với cán bộ không chỉ nằm ở năng lực chuyên môn mà còn liên quan đến đạo đức, kỷ luật, tự phê bình và quan hệ với nhân dân."
+        }
+      ]
+    },
+    {
+      "id": "round-3",
+      "order": 3,
+      "title": "AI LÀ CHỦ?",
+      "subtitle": "Của dân – Do dân – Vì dân",
+      "reward": "Mảnh mã #3",
+      "questions": [
+        {
+          "id": "r3-q1",
+          "type": "single",
+          "difficulty": "easy",
+          "question": "'Tất cả quyền lực nhà nước thuộc về nhân dân' thể hiện rõ nhất nội dung nào?",
+          "instruction": "Bắt đúng khái niệm",
+          "options": [
+            {
+              "id": "of-people",
+              "text": "CỦA DÂN"
+            },
+            {
+              "id": "by-people",
+              "text": "DO DÂN"
+            },
+            {
+              "id": "for-people",
+              "text": "VÌ DÂN"
+            }
+          ],
+          "correctAnswerIds": ["of-people"],
+          "explanation": "'Của dân' nhấn mạnh nhân dân là chủ thể của quyền lực nhà nước."
+        },
+        {
+          "id": "r3-q2",
+          "type": "single",
+          "difficulty": "easy",
+          "question": "'Nhân dân tham gia bầu cử để lập nên các cơ quan đại diện' thể hiện rõ nhất nội dung nào?",
+          "instruction": "Bắt đúng khái niệm",
+          "options": [
+            {
+              "id": "of-people",
+              "text": "CỦA DÂN"
+            },
+            {
+              "id": "by-people",
+              "text": "DO DÂN"
+            },
+            {
+              "id": "for-people",
+              "text": "VÌ DÂN"
+            }
+          ],
+          "correctAnswerIds": ["by-people"],
+          "explanation": "'Do dân' thể hiện việc nhân dân tham gia lập nên, ủng hộ và thực hiện quyền làm chủ đối với Nhà nước."
+        },
+        {
+          "id": "r3-q3",
+          "type": "single",
+          "difficulty": "easy",
+          "question": "'Hoạt động của Nhà nước hướng tới lợi ích và nguyện vọng chính đáng của nhân dân' thể hiện rõ nhất nội dung nào?",
+          "instruction": "Bắt đúng khái niệm",
+          "options": [
+            {
+              "id": "of-people",
+              "text": "CỦA DÂN"
+            },
+            {
+              "id": "by-people",
+              "text": "DO DÂN"
+            },
+            {
+              "id": "for-people",
+              "text": "VÌ DÂN"
+            }
+          ],
+          "correctAnswerIds": ["for-people"],
+          "explanation": "'Vì dân' nhấn mạnh mục tiêu hoạt động của Nhà nước là phục vụ lợi ích và nguyện vọng chính đáng của nhân dân."
+        },
+        {
+          "id": "r3-q4",
+          "type": "single",
+          "difficulty": "medium",
+          "question": "'Dân là chủ' chủ yếu nhấn mạnh điều gì?",
+          "instruction": "Bắt đáp án phù hợp nhất",
+          "options": [
+            {
+              "id": "position",
+              "text": "Vị thế của nhân dân với tư cách chủ thể quyền lực"
+            },
+            {
+              "id": "duty-only",
+              "text": "Chỉ nghĩa vụ đóng góp"
+            },
+            {
+              "id": "administration",
+              "text": "Bộ máy hành chính"
+            },
+            {
+              "id": "officials",
+              "text": "Quyền lực của cán bộ"
+            }
+          ],
+          "correctAnswerIds": ["position"],
+          "explanation": "'Dân là chủ' nhấn mạnh vị thế của nhân dân trong quan hệ với Nhà nước và quyền lực."
+        },
+        {
+          "id": "r3-q5",
+          "type": "single",
+          "difficulty": "hard",
+          "question": "Người dân tham gia, kiểm tra, giám sát và góp ý đối với hoạt động của Nhà nước thể hiện rõ nhất nội dung nào?",
+          "instruction": "Bắt đáp án phù hợp nhất",
+          "options": [
+            {
+              "id": "position-only",
+              "text": "Chỉ 'dân là chủ'"
+            },
+            {
+              "id": "exercise",
+              "text": "Dân làm chủ"
+            },
+            {
+              "id": "for-only",
+              "text": "Chỉ 'vì dân'"
+            },
+            {
+              "id": "unrelated",
+              "text": "Không liên quan đến quyền làm chủ"
+            }
+          ],
+          "correctAnswerIds": ["exercise"],
+          "explanation": "'Dân làm chủ' nhấn mạnh việc nhân dân thực tế thực hiện các quyền và trách nhiệm của chủ thể."
+        }
+      ]
+    },
+    {
+      "id": "round-4",
+      "order": 4,
+      "title": "MỞ KHÓA NHÀ NƯỚC PHÁP QUYỀN",
+      "subtitle": "Hiến pháp – pháp luật – kiểm soát quyền lực",
+      "reward": "Mảnh mã #4",
+      "questions": [
+        {
+          "id": "r4-q1",
+          "type": "single",
+          "difficulty": "easy",
+          "question": "Một Nhà nước hợp hiến, hợp pháp cần được tổ chức và hoạt động dựa trên cơ sở nào?",
+          "instruction": "Bắt 1 con cá đúng",
+          "options": [
+            {
+              "id": "personal-will",
+              "text": "Ý chí cá nhân"
+            },
+            {
+              "id": "constitution-law",
+              "text": "Hiến pháp và pháp luật"
+            },
+            {
+              "id": "private-custom",
+              "text": "Tập quán riêng"
+            },
+            {
+              "id": "no-legal-basis",
+              "text": "Quyết định không có căn cứ pháp lý"
+            }
+          ],
+          "correctAnswerIds": ["constitution-law"],
+          "explanation": "Tính hợp hiến, hợp pháp gắn với việc tổ chức và vận hành Nhà nước trên cơ sở Hiến pháp và pháp luật."
+        },
+        {
+          "id": "r4-q2",
+          "type": "multiple",
+          "difficulty": "medium",
+          "question": "Thượng tôn pháp luật đòi hỏi những điều nào?",
+          "instruction": "Bắt tất cả các con cá đúng",
+          "options": [
+            {
+              "id": "manage-by-law",
+              "text": "Nhà nước quản lý bằng pháp luật"
+            },
+            {
+              "id": "officials-obey",
+              "text": "Cán bộ tuân thủ pháp luật"
+            },
+            {
+              "id": "citizens-obey",
+              "text": "Công dân có ý thức chấp hành pháp luật"
+            },
+            {
+              "id": "official-exemption",
+              "text": "Người có chức vụ được miễn tuân thủ"
+            }
+          ],
+          "correctAnswerIds": [
+            "manage-by-law",
+            "officials-obey",
+            "citizens-obey"
+          ],
+          "explanation": "Thượng tôn pháp luật đòi hỏi cả Nhà nước, cán bộ và công dân đều tôn trọng và thực hiện pháp luật."
+        },
+        {
+          "id": "r4-q3",
+          "type": "single",
+          "difficulty": "medium",
+          "question": "'Pháp quyền nhân nghĩa' đặt trọng tâm vào điều gì?",
+          "instruction": "Bắt đáp án phù hợp nhất",
+          "options": [
+            {
+              "id": "absolute-power",
+              "text": "Quyền lực tuyệt đối"
+            },
+            {
+              "id": "human-rights",
+              "text": "Tôn trọng, bảo đảm quyền con người và tính nhân văn của pháp luật"
+            },
+            {
+              "id": "punishment-only",
+              "text": "Chỉ tăng hình phạt"
+            },
+            {
+              "id": "state-only",
+              "text": "Chỉ bảo vệ bộ máy nhà nước"
+            }
+          ],
+          "correctAnswerIds": ["human-rights"],
+          "explanation": "Pháp quyền nhân nghĩa nhấn mạnh pháp luật phải gắn với con người, quyền con người và tính nhân văn."
+        },
+        {
+          "id": "r4-q4",
+          "type": "single",
+          "difficulty": "medium",
+          "question": "Vì sao cần kiểm soát quyền lực nhà nước?",
+          "instruction": "Bắt đáp án phù hợp nhất",
+          "options": [
+            {
+              "id": "prevent-abuse",
+              "text": "Hạn chế nguy cơ lạm quyền và bảo đảm quyền lực được sử dụng đúng mục đích"
+            },
+            {
+              "id": "no-law",
+              "text": "Vì Nhà nước không cần pháp luật"
+            },
+            {
+              "id": "remove-people",
+              "text": "Để loại bỏ sự tham gia của nhân dân"
+            },
+            {
+              "id": "unlimited",
+              "text": "Để tập trung quyền lực không giới hạn"
+            }
+          ],
+          "correctAnswerIds": ["prevent-abuse"],
+          "explanation": "Kiểm soát quyền lực nhằm phòng ngừa việc quyền lực bị sử dụng sai mục đích và góp phần giữ cho bộ máy nhà nước hoạt động đúng."
+        },
+        {
+          "id": "r4-q5",
+          "type": "single",
+          "difficulty": "hard",
+          "question": "Một cơ quan tuyên bố hoạt động 'vì dân' nhưng không chịu sự kiểm tra, giám sát và không tuân thủ pháp luật. Điểm chưa phù hợp nhất là gì?",
+          "instruction": "Bắt đáp án phù hợp nhất",
+          "options": [
+            {
+              "id": "goal-enough",
+              "text": "Chỉ cần mục tiêu vì dân là đủ"
+            },
+            {
+              "id": "law-control",
+              "text": "'Vì dân' phải gắn với pháp luật và cơ chế kiểm soát quyền lực"
+            },
+            {
+              "id": "no-constitution",
+              "text": "Không cần Hiến pháp"
+            },
+            {
+              "id": "monitoring-bad",
+              "text": "Giám sát làm giảm quyền lực"
+            }
+          ],
+          "correctAnswerIds": ["law-control"],
+          "explanation": "Mục tiêu phục vụ nhân dân không tách rời yêu cầu thượng tôn pháp luật và kiểm soát quyền lực."
+        }
+      ]
+    }
+  ]
+}
