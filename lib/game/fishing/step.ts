@@ -1,5 +1,6 @@
 import { aimAngle, chargePower, startCast, stepCast } from "./cast";
 import { POND, ROD_TIP, WATER_Y } from "./constants";
+import { stepFish } from "./fish";
 import { finishReel, stepHook } from "./hook";
 import type { Fish, SceneEvent, SceneInput, SceneState } from "./types";
 
@@ -85,8 +86,19 @@ export function stepScene(
     events.push({ type: "reeled-in" });
   }
 
+  let fish = scene.fish;
+  if (hook.phase !== "idle" || scene.fish.length > 0) {
+    const stepped = scene.fish.map((item) => stepFish(item, hook, dt));
+    fish = stepped.map((item) => item.fish);
+    const bite = stepped.find((item) => item.bite);
+    if (bite) {
+      events.push({ type: "fish-bite", optionId: bite.fish.optionId });
+      hook = { ...hook, bobberShake: 1 };
+    }
+  }
+
   return {
-    scene: { ...scene, rod, hook, ripples },
+    scene: { ...scene, rod, hook, ripples, fish },
     events,
   };
 }

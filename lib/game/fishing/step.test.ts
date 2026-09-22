@@ -32,4 +32,31 @@ describe("stepScene pause", () => {
     expect(next.hook.y).toBe(WATER_Y + 40);
     expect(events).toEqual([]);
   });
+
+  it("emits fish-bite once when a fish reaches the hook", () => {
+    const scene = createScene([]);
+    scene.hook = {
+      phase: "in-water",
+      x: 300,
+      y: 300,
+      vx: 0,
+      vy: 0,
+      flightDistance: 0,
+      bobberShake: 0,
+    };
+    scene.fish = [{
+      optionId: "a",
+      text: "A",
+      isCorrect: true,
+      x: 300,
+      y: 300,
+      speed: 10,
+      heading: 0,
+      depth: 300,
+      detectRadius: 80,
+      state: "swim",
+    }];
+    const { events } = stepScene(scene, idleInput, 1 / 60);
+    expect(events.some((e) => e.type === "fish-bite" && e.optionId === "a")).toBe(true);
+  });
 });
