@@ -124,7 +124,15 @@ export function sessionReducer(
 ): SessionState {
   switch (action.type) {
     case "START":
-      return { ...state, screen: "character" };
+      return {
+        ...state,
+        characterId: null,
+        abilityUsed: false,
+        roundIndex: 0,
+        questionIndex: 0,
+        lives: STARTING_LIVES,
+        screen: "round-intro",
+      };
     case "SELECT_CHARACTER":
       return {
         ...state,

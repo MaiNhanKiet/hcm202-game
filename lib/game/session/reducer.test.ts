@@ -10,12 +10,10 @@ function play(state: SessionState, ...actions: Parameters<typeof sessionReducer>
   return actions.reduce((s, a) => sessionReducer(s, a, content), state);
 }
 
-function toFishing(character: SessionState["characterId"] = "observer") {
-  return play(createSession(content), { type: "START" }, {
-    type: "SELECT_CHARACTER",
-    characterId: character!,
-  }, { type: "BEGIN_ROUND" });
+function toFishing() {
+  return play(createSession(content), { type: "START" }, { type: "BEGIN_ROUND" });
 }
+
 
 describe("sessionReducer", () => {
   it("starts on title with 3 lives and no rewards", () => {
@@ -26,10 +24,15 @@ describe("sessionReducer", () => {
     expect(s.abilityUsed).toBe(false);
   });
 
-  it("START then SELECT_CHARACTER then BEGIN_ROUND reaches fishing", () => {
+  it("START skips character select and goes to round-intro", () => {
+    const s = play(createSession(content), { type: "START" });
+    expect(s.screen).toBe("round-intro");
+    expect(s.characterId).toBeNull();
+  });
+
+  it("START then BEGIN_ROUND reaches fishing", () => {
     const s = toFishing();
     expect(s.screen).toBe("fishing");
-    expect(s.characterId).toBe("observer");
     expect(s.roundIndex).toBe(0);
     expect(s.questionIndex).toBe(0);
   });
@@ -41,11 +44,6 @@ describe("sessionReducer", () => {
     };
     let s = createSession(broken);
     s = sessionReducer(s, { type: "START" }, broken);
-    s = sessionReducer(
-      s,
-      { type: "SELECT_CHARACTER", characterId: "observer" },
-      broken,
-    );
     s = sessionReducer(s, { type: "BEGIN_ROUND" }, broken);
     expect(s.screen).toBe("data-error");
     expect(s.dataError).toBe("Lỗi dữ liệu");

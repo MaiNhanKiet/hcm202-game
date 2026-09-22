@@ -2,15 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Dispatch } from "react";
+import { drawFishingScene } from "./drawFishingScene";
 import { FishingHud } from "./FishingHud";
-import { fishFill, optionTag } from "@/lib/game/fishing/appearance";
-import { chargePower } from "@/lib/game/fishing/cast";
 import { POND } from "@/lib/game/fishing/constants";
-import { fleeWrong, spawnFish } from "@/lib/game/fishing/fish";
+import { canCast, prepPhase, remainingCountdown, type PrepPhase } from "@/lib/game/fishing/countdown";
+import { spawnFish } from "@/lib/game/fishing/fish";
 import { createScene, stepScene } from "@/lib/game/fishing/step";
-import type { SceneInput, SceneState } from "@/lib/game/fishing/types";
+import type { HookPhase, SceneInput, SceneState } from "@/lib/game/fishing/types";
 import type { GameContent } from "@/lib/game/content/types";
-import { currentQuestion } from "@/lib/game/session/selectors";
+import { currentQuestion, currentRound } from "@/lib/game/session/selectors";
 import type { SessionAction, SessionState } from "@/lib/game/session/types";
 
 type FishingSlotProps = {
@@ -19,89 +19,14 @@ type FishingSlotProps = {
   content: GameContent;
 };
 
-function drawScene(
-  ctx: CanvasRenderingContext2D,
-  scene: SceneState,
-  width: number,
-  height: number,
-  hintedOptionId: string | null,
-) {
-  ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = "#7ec8e3";
-  ctx.fillRect(0, 0, width, scene.waterY);
-  ctx.fillStyle = "#0b3a4a";
-  ctx.fillRect(0, scene.waterY, width, height - scene.waterY);
-  ctx.strokeStyle = "#9ad7ea";
-  ctx.beginPath();
-  ctx.moveTo(0, scene.waterY);
-  for (let x = 0; x <= width; x += 8) {
-    const y = scene.waterY + Math.sin(x / 28 + scene.ripples.length) * 2.4;
-    ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-
-  scene.fish.forEach((fish, index) => {
-    if (fish.state === "hooked") return;
-    ctx.save();
-    ctx.translate(fish.x, fish.y);
-    ctx.rotate(fish.heading);
-    ctx.fillStyle = fish.state === "flee" ? "#5a7180" : fishFill(index);
-    ctx.globalAlpha =
-      fish.state === "flee" || fish.optionId === hintedOptionId ? 0.35 : 1;
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 16, 8, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#fff";
-    ctx.globalAlpha = 1;
-    ctx.rotate(-fish.heading);
-    ctx.font = "12px sans-serif";
-    ctx.fillText(optionTag(index), -5, 4);
-    ctx.restore();
-  });
-
-  const { hook, rod } = scene;
-  ctx.strokeStyle = "#e8e0c8";
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(rod.tipX, rod.tipY);
-  const midX = (rod.tipX + hook.x) / 2;
-  const sag = hook.phase === "flying" ? 8 : 22;
-  ctx.quadraticCurveTo(midX, Math.max(hook.y, rod.tipY) + sag, hook.x, hook.y);
-  ctx.stroke();
-
-  ctx.save();
-  ctx.translate(rod.tipX, rod.tipY);
-  ctx.rotate(rod.angle);
-  ctx.strokeStyle = "#8b5a2b";
-  ctx.lineWidth = 5;
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.quadraticCurveTo(18, -rod.bend * 16, 46, -4 - rod.bend * 10);
-  ctx.stroke();
-  ctx.restore();
-
-  if (hook.phase === "in-water" || hook.phase === "reeling") {
-    const shake = hook.bobberShake * Math.sin(performance.now() / 40) * 4;
-    ctx.fillStyle = "#d94f4f";
-    ctx.beginPath();
-    ctx.arc(hook.x + shake, scene.waterY, 6, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.fillStyle = "#d9d3c3";
-  ctx.beginPath();
-  ctx.arc(hook.x, hook.y, 4, 0, Math.PI * 2);
-  ctx.fill();
-
-  for (const ripple of scene.ripples) {
-    ctx.strokeStyle = `rgba(255,255,255,${1 - ripple.age / 0.6})`;
-    ctx.beginPath();
-    ctx.arc(ripple.x, ripple.y, 8 + ripple.age * 40, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-}
 
 export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
   const question = currentQuestion(state, content);
+  const round = currentRound(state, content);
+  const roundNumber = state.roundIndex + 1;
+  const questionNumber = state.questionIndex + 1;
+  const totalRounds = content.rounds.length;
+  const totalQuestions = round?.questions.length ?? 0;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<SceneState | null>(null);
   const inputRef = useRef<SceneInput>({
@@ -109,16 +34,36 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
     charging: false,
     chargeMs: 0,
     reel: false,
-    drop: false,
     castNow: false,
     reelFull: false,
   });
   const chargeStartedAt = useRef<number | null>(null);
+  const hudRef = useRef({ hookPhase: "idle" as HookPhase, charging: false, charge: 0 });
+  const [hookPhase, setHookPhase] = useState<HookPhase>("idle");
+  const [charging, setCharging] = useState(false);
+  const [charge, setCharge] = useState(0);
+  const [countdown, setCountdown] = useState(5);
+  const [prep, setPrep] = useState<PrepPhase>("question");
+  const [fishingReady, setFishingReady] = useState(false);
+  const fishingReadyRef = useRef(false);
+  const countdownRef = useRef(5);
+  const prepRef = useRef<PrepPhase>("question");
+  const countdownStartedAt = useRef<number | null>(null);
+  const playStartedAt = useRef<number | null>(null);
+  const [playElapsedMs, setPlayElapsedMs] = useState(0);
   const [lastCaught, setLastCaught] = useState<{ id: string; text: string } | null>(
     null,
   );
   const lastCaughtText =
     question && lastCaught?.id === question.id ? lastCaught.text : null;
+  const questionRef = useRef(question);
+  questionRef.current = question;
+
+  useEffect(() => {
+    if (playStartedAt.current == null) {
+      playStartedAt.current = Date.now();
+    }
+  }, []);
 
   useEffect(() => {
     if (!question) return;
@@ -131,7 +76,42 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
         })),
       ),
     );
+    hudRef.current = { hookPhase: "idle", charging: false, charge: 0 };
+    countdownStartedAt.current = Date.now();
+    countdownRef.current = 5;
+    prepRef.current = "question";
+    fishingReadyRef.current = false;
+    setCountdown(5);
+    setPrep("question");
+    setFishingReady(false);
   }, [question?.id]);
+
+  useEffect(() => {
+    const tick = window.setInterval(() => {
+      if (playStartedAt.current != null) {
+        setPlayElapsedMs(Date.now() - playStartedAt.current);
+      }
+      const started = countdownStartedAt.current;
+      if (started == null) return;
+      const elapsed = Date.now() - started;
+      const nextCount = remainingCountdown(elapsed);
+      const nextPrep = prepPhase(elapsed);
+      const ready = canCast(elapsed);
+      if (nextCount !== countdownRef.current) {
+        countdownRef.current = nextCount;
+        setCountdown(nextCount);
+      }
+      if (nextPrep !== prepRef.current) {
+        prepRef.current = nextPrep;
+        setPrep(nextPrep);
+      }
+      if (ready !== fishingReadyRef.current) {
+        fishingReadyRef.current = ready;
+        setFishingReady(ready);
+      }
+    }, 200);
+    return () => window.clearInterval(tick);
+  }, []);
 
   useEffect(() => {
     const onVisibility = () => {
@@ -145,11 +125,9 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
+      if (!fishingReadyRef.current) return;
       if (event.key === "ArrowUp" || event.key === "w" || event.key === "W") {
         inputRef.current.reel = event.type === "keydown";
-      }
-      if (event.key === "ArrowDown" || event.key === "s" || event.key === "S") {
-        inputRef.current.drop = event.type === "keydown";
       }
       if (event.type === "keydown" && (event.key === "r" || event.key === "R")) {
         inputRef.current.reelFull = true;
@@ -175,6 +153,30 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
       if (!alive) return;
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
+      if (countdownStartedAt.current != null) {
+        const elapsed = Date.now() - countdownStartedAt.current;
+        const nextCount = remainingCountdown(elapsed);
+        const nextPrep = prepPhase(elapsed);
+        const ready = canCast(elapsed);
+        if (nextCount !== countdownRef.current) {
+          countdownRef.current = nextCount;
+          setCountdown(nextCount);
+        }
+        if (nextPrep !== prepRef.current) {
+          prepRef.current = nextPrep;
+          setPrep(nextPrep);
+        }
+        if (ready !== fishingReadyRef.current) {
+          fishingReadyRef.current = ready;
+          setFishingReady(ready);
+        }
+      }
+      if (!fishingReadyRef.current) {
+        inputRef.current.charging = false;
+        inputRef.current.castNow = false;
+        inputRef.current.reel = false;
+        inputRef.current.reelFull = false;
+      }
       if (chargeStartedAt.current !== null) {
         inputRef.current.chargeMs = now - chargeStartedAt.current;
       }
@@ -187,24 +189,47 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
       inputRef.current.castNow = false;
       inputRef.current.reelFull = false;
       for (const event of events) {
-        if (event.type === "fish-bite" && question) {
-          const option = question.options.find((item) => item.id === event.optionId);
+        if (!questionRef.current) continue;
+        const current = questionRef.current;
+        if (event.type === "fish-bite") {
+          const option = current.options.find((item) => item.id === event.optionId);
           setLastCaught({
-            id: question.id,
+            id: current.id,
             text: option?.text ?? event.optionId,
           });
-          if (!question.correctAnswerIds.includes(event.optionId)) {
-            sceneRef.current.fish = fleeWrong(sceneRef.current.fish, event.optionId);
+          if (!current.correctAnswerIds.includes(event.optionId)) {
+            dispatch({ type: "SCORE_CATCH", optionId: event.optionId });
           }
+        }
+        if (event.type === "fish-landed") {
           dispatch({ type: "SCORE_CATCH", optionId: event.optionId });
         }
       }
-      drawScene(
+      const nextPhase = sceneRef.current.hook.phase;
+      const nextCharging = inputRef.current.charging;
+      const nextCharge = sceneRef.current.rod.power;
+      if (
+        hudRef.current.hookPhase !== nextPhase ||
+        hudRef.current.charging !== nextCharging ||
+        Math.abs(hudRef.current.charge - nextCharge) > 0.04
+      ) {
+        hudRef.current = {
+          hookPhase: nextPhase,
+          charging: nextCharging,
+          charge: nextCharge,
+        };
+        setHookPhase(nextPhase);
+        setCharging(nextCharging);
+        setCharge(nextCharge);
+      }
+      drawFishingScene(
         ctx,
         sceneRef.current,
         canvas.width,
         canvas.height,
         state.hintedOptionId,
+        state.characterId,
+        now,
       );
       if (alive && typeof requestAnimationFrame === "function") {
         frame = requestAnimationFrame(tick);
@@ -215,22 +240,33 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
       alive = false;
       cancelAnimationFrame(frame);
     };
-  }, [dispatch, question, state.hintedOptionId]);
+  }, [dispatch, question?.id, state.hintedOptionId]);
 
   if (!question) return null;
 
   return (
-    <div className="relative min-h-screen bg-[#071c24] text-white">
+    <div className="relative min-h-screen overflow-hidden bg-[#061820] text-foreground">
       <FishingHud
         question={question}
         state={state}
         lastCaughtText={lastCaughtText}
-        onAbility={() => dispatch({ type: "USE_ABILITY" })}
-        onReelFull={() => {
-          inputRef.current.reelFull = true;
-        }}
+        hookPhase={hookPhase}
+        prep={prep}
+        countdown={countdown}
+        playElapsedMs={playElapsedMs}
+        charging={charging}
+        charge={charge}
+        roundNumber={roundNumber}
+        totalRounds={totalRounds}
+        questionNumber={questionNumber}
+        totalQuestions={totalQuestions}
       />
-      <div role="region" aria-label="fishing-scene" className="h-screen w-full">
+      <div
+        role="region"
+        aria-label="fishing-scene"
+        className="h-screen w-full"
+        onContextMenu={(event) => event.preventDefault()}
+      >
         <canvas
           ref={canvasRef}
           width={POND.xMax + 40}
@@ -245,26 +281,64 @@ export function FishingScene({ state, dispatch, content }: FishingSlotProps) {
               y: (event.clientY - rect.top) * scaleY,
             };
           }}
-          onPointerDown={() => {
-            if (sceneRef.current?.hook.phase !== "idle") return;
+          onPointerDown={(event) => {
+            if (!fishingReadyRef.current) return;
+            if (event.button === 2) {
+              event.preventDefault();
+              return;
+            }
+            if (event.button !== 0) return;
+            const phase = sceneRef.current?.hook.phase;
+            if (phase === "in-water" || phase === "flying" || phase === "reeling") {
+              inputRef.current.reel = true;
+              return;
+            }
+            if (phase !== "idle") return;
+            try {
+              event.currentTarget.setPointerCapture(event.pointerId);
+            } catch {
+              /* pointer capture is optional */
+            }
             inputRef.current.charging = true;
             chargeStartedAt.current = performance.now();
+            hudRef.current = { ...hudRef.current, charging: true, charge: 0 };
+            setCharging(true);
+            setCharge(0);
           }}
-          onPointerUp={() => {
+          onPointerUp={(event) => {
+            if (event.button !== 0) return;
+            inputRef.current.reel = false;
+            try {
+              if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                event.currentTarget.releasePointerCapture(event.pointerId);
+              }
+            } catch {
+              /* ignore */
+            }
             if (inputRef.current.charging) {
               inputRef.current.castNow = true;
-              inputRef.current.chargeMs = chargePower(
-                chargeStartedAt.current
-                  ? performance.now() - chargeStartedAt.current
-                  : 0,
-              ) * 900;
+              inputRef.current.chargeMs = chargeStartedAt.current
+                ? performance.now() - chargeStartedAt.current
+                : 0;
             }
             inputRef.current.charging = false;
             chargeStartedAt.current = null;
+            hudRef.current = { ...hudRef.current, charging: false };
+            setCharging(false);
           }}
-          onPointerLeave={() => {
+          onPointerCancel={(event) => {
+            try {
+              if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                event.currentTarget.releasePointerCapture(event.pointerId);
+              }
+            } catch {
+              /* ignore */
+            }
+            inputRef.current.reel = false;
             inputRef.current.charging = false;
             chargeStartedAt.current = null;
+            hudRef.current = { ...hudRef.current, charging: false };
+            setCharging(false);
           }}
         />
       </div>

@@ -7,7 +7,6 @@ import { createSession, sessionReducer } from "@/lib/game/session/reducer";
 import { currentQuestion, currentRound } from "@/lib/game/session/selectors";
 import type { SessionAction, SessionState } from "@/lib/game/session/types";
 import { FishingScene } from "./FishingScene";
-import { CharacterSelect } from "./screens/CharacterSelect";
 import { DataError } from "./screens/DataError";
 import { ExplainScreen } from "./screens/ExplainScreen";
 import { RoundClear } from "./screens/RoundClear";
@@ -81,19 +80,12 @@ export function GameApp({
   if (state.screen === "title") {
     return <TitleScreen onStart={() => dispatch({ type: "START" })} />;
   }
-  if (state.screen === "character") {
-    return (
-      <CharacterSelect
-        onSelect={(characterId) =>
-          dispatch({ type: "SELECT_CHARACTER", characterId })
-        }
-      />
-    );
-  }
   if (state.screen === "round-intro" && round) {
     return (
       <RoundIntro
         round={round}
+        roundNumber={state.roundIndex + 1}
+        totalRounds={content.rounds.length}
         lives={state.lives}
         rewards={state.unlockedRewards}
         onBegin={() => dispatch({ type: "BEGIN_ROUND" })}

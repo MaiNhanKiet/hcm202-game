@@ -5,24 +5,94 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
+/** Half-angle of the white power wedge (radians). */
+export const POWER_WEDGE_HALF = 0.22;
+/** Inner dead-zone near the tip before power starts rising. */
+export const POWER_WEDGE_MIN = 56;
+/** Outer radius of the white triangle — full power. */
+export const POWER_WEDGE_MAX = 420;
+
 export function chargePower(heldMs: number): number {
   return clamp(heldMs / 900, 0, 1);
+}
+
+/**
+ * Drag inside the white cast wedge:
+ * - distance from tip → power (near = weak, far = strong)
+ * - direction inside the fan → aim angle
+ */
+export function wedgeAimPower(
+  tip: { x: number; y: number },
+  pointer: { x: number; y: number },
+): { power: number; angle: number } {
+  const dx = pointer.x - tip.x;
+  const dy = pointer.y - tip.y;
+  const dist = Math.hypot(dx, dy);
+  const rawAngle = Math.atan2(dy, dx);
+  const angle = clamp(rawAngle, -Math.PI * 0.22, Math.PI * 0.42);
+  const power = clamp(
+    (dist - POWER_WEDGE_MIN) / (POWER_WEDGE_MAX - POWER_WEDGE_MIN),
+    0,
+    1,
+  );
+  return { power, angle };
+}
+
+/** @deprecated — use wedgeAimPower */
+export function horizontalPower(tipX: number, pointerX: number): number {
+  return clamp((pointerX - tipX - 24) / 520, 0, 1);
+}
+
+/** @deprecated */
+export function pullPower(
+  tip: { x: number; y: number },
+  pointer: { x: number; y: number },
+): number {
+  return wedgeAimPower(tip, pointer).power;
+}
+
+export function chargeFromInput(
+  tip: { x: number; y: number },
+  pointer: { x: number; y: number } | null,
+  heldMs: number,
+): number {
+  if (pointer) return wedgeAimPower(tip, pointer).power;
+  return chargePower(heldMs);
 }
 
 export function aimAngle(
   rod: { x: number; y: number },
   pointer: { x: number; y: number },
 ): number {
-  const angle = Math.atan2(pointer.y - rod.y, pointer.x - rod.x);
-  return clamp(angle, -Math.PI * 0.15, Math.PI * 0.55);
+  return wedgeAimPower(rod, pointer).angle;
 }
 
-export function startCast(angle: number, power: number): HookState {
-  const speed = 360 + power * 860;
+export function previewCastPath(
+  angle: number,
+  power: number,
+  tip: { x: number; y: number } = ROD_TIP,
+): { x: number; y: number }[] {
+  const points: { x: number; y: number }[] = [{ x: tip.x, y: tip.y }];
+  let hook = startCast(angle, power, tip);
+  for (let i = 0; i < 200; i += 1) {
+    const stepped = stepCast(hook, 1 / 60);
+    hook = stepped.hook;
+    points.push({ x: hook.x, y: hook.y });
+    if (stepped.landed || stepped.broken) break;
+  }
+  return points;
+}
+
+export function startCast(
+  angle: number,
+  power: number,
+  tip: { x: number; y: number } = ROD_TIP,
+): HookState {
+  const speed = 320 + power * 1380;
   return {
     phase: "flying",
-    x: ROD_TIP.x,
-    y: ROD_TIP.y,
+    x: tip.x,
+    y: tip.y,
     vx: Math.cos(angle) * speed,
     vy: Math.sin(angle) * speed,
     flightDistance: 0,

@@ -1,6 +1,6 @@
 export const WATER_Y = 220;
 export const POND = { xMin: 40, xMax: 960, yMax: 540 };
-export const MAX_CAST_DISTANCE = 520;
+export const MAX_CAST_DISTANCE = 780;
 export const GRAVITY = 1800;
 export const ROD_TIP = { x: 90, y: 36 };
 export const SINK_SPEED = 40;

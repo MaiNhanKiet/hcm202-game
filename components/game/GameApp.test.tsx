@@ -6,13 +6,14 @@ import { makeFixtureContent } from "@/lib/game/content/fixtures";
 import { GameApp, StubFishing } from "./GameApp";
 
 describe("GameApp", () => {
-  it("plays title → character → round → catch → explain", async () => {
+  it("plays title → round → catch → explain without character select", async () => {
     const user = userEvent.setup();
     render(<GameApp content={makeFixtureContent()} FishingSlot={StubFishing} />);
     expect(screen.getByText("Câu Cá Tri Thức")).toBeTruthy();
-    expect(screen.getByText("Giải mã quyền lực")).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: /bắt đầu/i }));
-    await user.click(screen.getByRole("button", { name: /người quan sát/i }));
+    expect(screen.getByText(/giải mã quyền lực/i)).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: /bắt đầu game/i }));
+    expect(screen.queryByText(/chọn nhân vật/i)).toBeNull();
+    expect(screen.getByText(/luật chơi/i)).toBeTruthy();
     await user.click(screen.getByRole("button", { name: /vào vòng/i }));
     expect(screen.getByLabelText("fishing-scene")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "yes" }));
@@ -24,8 +25,7 @@ describe("GameApp", () => {
     const content = makeFixtureContent();
     content.rounds[0] = { ...content.rounds[0], questions: [] };
     render(<GameApp content={content} FishingSlot={StubFishing} />);
-    await user.click(screen.getByRole("button", { name: /bắt đầu/i }));
-    await user.click(screen.getByRole("button", { name: /người quan sát/i }));
+    await user.click(screen.getByRole("button", { name: /bắt đầu game/i }));
     await user.click(screen.getByRole("button", { name: /vào vòng/i }));
     expect(screen.getByText("Lỗi dữ liệu")).toBeTruthy();
   });
